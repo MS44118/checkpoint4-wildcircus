@@ -2,100 +2,101 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import {
-  Select, message, Row, Col, TimePicker,  DatePicker, Radio
-} from 'antd';
+import { message, Row, Col, TimePicker,  DatePicker } from 'antd';
 import conf from '../../app.conf';
 import moment from 'moment';
+
 // CSS
 import './EventManager.css';
 
 // ACTIONS
-// import { displayNeweventFormAction, displayKnowneventFormAction } from '../../Actions/displayeventFormAction';
-// import { updateeventAction, neweventAction } from '../../Actions/eventAction';
+import { initEventsAction, createEventAction } from '../../Actions/adminActions';
 
-function EventManager({ idEvent, eventSelected, dispatch }) {
-  const { Option } = Select;
-  const [id, setId] = useState(idEvent);
-  const [event, setEvent] = useState({});
-  const [address, setAdress] = useState('');
-  const [date, setDate] = useState('');
-  const [city, setCity] = useState('');
-  const [capacity, setCapacity] = useState('');
+const EventManager = ({ idevent, events, dispatch }) => {
   const [labelActive, setLabelActive] = useState('');
-
-  const { MonthPicker, RangePicker, WeekPicker } = DatePicker;
-  // const { size } = this.state;
-  const [size, setSize] = useState()
-  
-  // useEffect = e => {
-  //   setSize({ size: e.target.value });
-  // };
-
   const format = 'HH:mm';
+
+  const [id, setId] = useState();
+  const [address, setAddress] = useState('');
+  const [date, setDate] = useState('');
+  const [hour, setHour] = useState('');
+  const [city, setCity] = useState('');
+  const [capacity, setCapacity] = useState();
+
+  const [newEvent, setNewEvent] = useState({});
+
+  // api call if events not existing in store
+  useEffect(() => {
+    if (!events) {
+      axios.get(`${conf.url}/api/events/curdate`)
+        .then((result) => {
+          dispatch(initEventsAction({events: result.data}));
+      });
+    }
+  }, [dispatch, events]);
+
+  useEffect(() => {
+    console.log(`events from store`);
+    console.log(events);
+    console.log(`props : `);
+    console.log(idevent);
+  }, [events, idevent]) 
+
+
   // useEffect(() => {
-  //   if (eventSelected.event) {
-  //     setId(eventSelected.event.id);
-  //     setAdress(eventSelected.event.address);
-  //     setDate(eventSelected.event.date !== 'Invalid date' ? eventSelected.event.date : '');
-  //     setCity(eventSelected.event.city);
-  //     setCapacity(eventSelected.event.capacity);
+  //   if (events) {
+  //     const index = events.findIndex(i => i.id_event === idevent);
+  //     setId(events[index].id_event);
+  //     setAdress(events[index].address_event);
+  //     setDate(events[index].date_event !== 'Invalid date' ? events[index].date_event : '');
+  //     setCity(events[index].city_event);
+  //     setCapacity(events[index].capacity);
   //     setLabelActive('active');
   //   }
-  // }, [eventSelected]);
+  // }, [idevent, events]);
+
+
+  const insertNewEvent = () => {
+    let resultat = {};
+    console.log('nous allons créé un nouvel evenement dans la BDD');
+    axios.post(`${conf.url}/api/events/`, newEvent)
+      .then((res) => {
+        message.success("L'enregistrement a bien été pris en compte en BDD", 3);
+        resultat = res.status;
+        console.log(resultat);
+      })
+      .then(() => {
+        console.log('ici on va mettre a jour le store')
+        if (resultat === 200) {
+          dispatch(createEventAction(newEvent));
+        } else {
+          message.warning(resultat, 3);
+        }
+      })
+      .catch(() => {
+        message.error("Une erreur s'est produite. Merci de réessayer", 3);
+      });
+    setId('');
+    setAddress('');
+    setDate('');
+    setHour('');
+    setCity('');
+    setCapacity('');
+  };
 
   useEffect(() => {
     const eventTemp = {
       id,
       address,
       date,
+      hour,
       city,
       capacity,
     };
-    setEvent(eventTemp);
-    console.log(eventTemp);
-    // dispatch(eventSelected({eventTemp}))
-  }, [id, address, date, city, capacity,]);
+    setNewEvent(eventTemp);
+  }, [id, address, date, hour, city, capacity]);
 
   
-  // const handleSend = () => {
-  //   if (eventSelected === 'new') {
-  //     dispatch(displayNeweventFormAction('none'));
-  //   } else {
-  //     dispatch(displayKnowneventFormAction('none'));
-  //   }
-  //   if (id) {
-  //     dispatch(updateeventAction(event));
-  //     axios.put(`${conf.url}/api/event/${id}`, event)
-  //       .then((res) => {
-  //         if (res.status === 200) {
-  //           dispatch(updateeventAction(event));
-  //           message.success('La modification a bien été prise en compte', 3);
-  //         }
-  //       })
-  //       .catch(() => {
-  //         message.error("Une erreur s'est produite. Merci de réessayer", 3);
-  //       });
-  //   } else {
-  //     axios.post(`${conf.url}/api/event/`, event)
-  //       .then((data) => {
-  //         if (data) {
-  //           const eventTemp = { ...event, id: data.data[0].id };
-  //           dispatch(neweventAction(eventTemp));
-  //           message.success("L'enregistrement a bien été pris en compte", 3);
-  //         }
-  //       })
-  //       .catch(() => {
-  //         message.error("Une erreur s'est produite. Merci de réessayer", 3);
-  //       });
-  //   }
-  //   setId('');
-  //   setAdress('');
-  //   setDate('');
-  //   setCity('');
-  //   setCapacity('');
-  // };
-
 
   return (
     <div className="container form-event">
@@ -103,23 +104,33 @@ function EventManager({ idEvent, eventSelected, dispatch }) {
         <Col sm={24} md={12} className="input-field">
           <i className="material-icons prefix"></i>
           <input
-            value={id !== null ? id : ''}
+            value={idevent !== null ? idevent : ''}
             onChange={e => setCapacity(e.target.value)}
             id="id"
             type="text"
             className="validate"
           />
-          <label className={labelActive} htmlFor="capacity">
+          <label className={labelActive} htmlFor="id">
             n° évènement
           </label>
         </Col>
       </Row>
       <Row>
         <Col sm={24} md={12} className="input-field pickers">
-          <DatePicker size="default" />
+          <DatePicker
+            locale="fr"
+            dateFormat="dd/MM/yyyy"
+            selected={date && new Date(date)}
+            onChange={date => date && setDate(moment(date._d).format('YYYY-MM-DD'))}
+          />
         </Col>
-        <Col>
-          <TimePicker defaultValue={moment('14:00', format)} format={format} />
+        <Col sm={24} md={12} className="input-field pickers">
+          <TimePicker 
+            defaultValue={moment('14:00', format)} 
+            format={format} 
+            selected={hour && new Date(hour)}
+            onChange={hour => hour && setHour(moment(hour._d).format('HH:mm'))}
+          />
         </Col>
       </Row>
       <Row>
@@ -142,7 +153,7 @@ function EventManager({ idEvent, eventSelected, dispatch }) {
           <i className="material-icons prefix">location_on</i>
           <input
             value={address !== null ? address : ''}
-            onChange={e => setAdress(e.target.value)}
+            onChange={e => setAddress(e.target.value)}
             id="address"
             type="text"
             className="validate"
@@ -172,7 +183,7 @@ function EventManager({ idEvent, eventSelected, dispatch }) {
           <button
             type="button"
             className="waves-effect waves-light btn-small teal darken-1 white-text right col s4"
-            // onClick={handleSend}
+            onClick={() => insertNewEvent(newEvent)}
           >
             Envoyer
           </button>
@@ -182,22 +193,20 @@ function EventManager({ idEvent, eventSelected, dispatch }) {
   );
 }
 
-EventManager
-.propTypes = {
-  eventSelected: PropTypes.shape({
-    address: PropTypes.string,
-    date: PropTypes.string,
-    city: PropTypes.string,
-    capacity: PropTypes.string,
-  }),
+const mapStateToProps = store => ({
+  events: store.events,
+});
+
+EventManager.propTypes = {
+  events: PropTypes.arrayOf(PropTypes.object),
+  idevent: PropTypes.number,
   dispatch: PropTypes.func,
 };
 
-EventManager
-.defaultProps = {
-  eventSelected: null,
+EventManager.defaultProps = {
+  events: mapStateToProps.events,
+  idevent: null,
   dispatch: null,
 };
 
-export default connect()(EventManager
-  );
+export default connect(mapStateToProps)(EventManager);

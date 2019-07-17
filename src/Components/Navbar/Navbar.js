@@ -16,7 +16,7 @@ const Navbar = () => {
           <a href="to" data-target="mobile-demo" className="sidenav-trigger"><i className="material-icons">menu</i></a>
           <ul className="right hide-on-med-and-down">
             <li><NavLink exact to="/">Le Spectacle</NavLink></li>
-            <li><NavLink exact to="/booking">La Billetterie</NavLink></li>
+            <li><NavLink exact to="/dates">La Billetterie</NavLink></li>
             {/* <li><NavLink exact to="/company">La Compagnie</NavLink></li> */}
             <li><NavLink exact to="/admin"><i className="material-icons">lock_outline</i></NavLink></li>
           </ul>

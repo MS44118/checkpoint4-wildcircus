@@ -42,17 +42,11 @@ function AdminEvents({ dispatch }) {
   useEffect(() => {
     axios.get(`${conf.url}/api/events/curdate`)
       .then((result) => {
-        dispatch(initEventsAction(result.data));
+        dispatch(initEventsAction({events: result.data}));
         setEvents(result.data);
       });
   }, [dispatch]);
 
-  // set for a specific event, if the list of registrations is visible or not
-  // useEffect(() => {
-  //   let array = [];
-  //   array = events.map(() => (false));
-  //   setDeleteModal(array);
-  // }, [events]);
 
   return (
     <div className="container">
@@ -62,7 +56,7 @@ function AdminEvents({ dispatch }) {
 
       <div className="row new-event">
         <ul>
-          <Link to="/events/new">
+          <Link to="/events/">
             créer une nouvelle date
           </Link>
         </ul>
@@ -91,7 +85,7 @@ function AdminEvents({ dispatch }) {
               <li className="col l4 hide-on-med-and-down">{event.address_event}</li>
               <li className="col s1">{event.total_booking}/{event.capacity}</li>
               <li className="col s1">
-                <Link to={`/events/${event.id_event}`} idEvent={event.id_event}>
+                <Link to={`/events/${event.id_event}`} idevent={event.id_event}>
                   <i className="material-icons">create</i>
                 </Link>
               </li>

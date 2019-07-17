@@ -54,6 +54,30 @@ api.get('/api/booking/:id', (req, res) => {
   })
 })
 
+api.post('/api/events', (req, res) => {
+  const formData = req.body;
+  console.log(formData);
+
+  const data = {
+    date_event: `${formData.date} ${formData.hour}`,
+    city_event: formData.city,
+    address_event: formData.address,
+    capacity: formData.capacity,
+  }
+  console.log(data);
+  connection.query('INSERT INTO events SET ?', 
+  data, 
+  (err, results) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send("Erreur lors de la sauvegarde d'un nouveau evenement");
+    } else {
+      res.status(200).send('evenement créé dans la base de données');
+    }    
+  });
+});
+
+
 api.delete('/api/event/:id', (req, res) => {
   const idEvent = req.params.id;
   console.log(`lancement suppression de l'evenement ${idEvent}: controle si l'evenement existe`);
@@ -350,27 +374,7 @@ api.delete('/api/event/:id', (req, res) => {
 //   });
 // });
 
-// api.post('/api/events', (req, res) => {
-//   const formData = req.body;
-//   const data = {
-//     date_b: formData.dateB,
-//     date_e: formData.dateE,
-//     name_event: formData.nameEvent,
-//     capacity: formData.capacity,
-//     address_event: formData.addressEvent,
-//     description_event: formData.descriptionEvent,
-//     picture_event: formData.pictureEvent,
-//     activity_id: formData.activityId,
-//   }
-//   connection.query('INSERT INTO events SET ?', data, (err, results) => {
-//     if (err) {
-//       console.log(err);
-//       res.status(500).send("Erreur lors de la sauvegarde d'un nouveau evenement");
-//     } else {
-//       res.sendStatus(200);
-//     }    
-//   });
-// });
+
 
 // api.put('/api/events/:id', (req, res) => {
 //   const idEvent = req.params.id;

@@ -1,0 +1,7 @@
+.spectacle{
+  max-width: 650px;
+  text-align: justify;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

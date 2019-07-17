@@ -4,6 +4,11 @@ export const initEventsAction = events => ({
   payload: events,
 });
 
+export const createEventAction = event => ({
+  type: 'CREATE_EVENT',
+  payload: event,
+});
+
 export const removeEventAction = id => ({
   type: 'REMOVE_EVENT',
   payload: id,
