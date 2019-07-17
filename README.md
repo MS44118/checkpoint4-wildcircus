@@ -1,8 +1,17 @@
+# CHECKPOINT 4
+
+This project is the last checkpoint (lasting for 48h) after 5 months training at the Nantes Wild Code School 2019.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
 
-In the project directory, you can run:
+In the api directory, you can run the server with node/nodemon (http://localhost:8000) :
+
+### `nodemon index.js`
+
+
+In the project directory, you can run (web app):
 
 ### `npm start`
 
