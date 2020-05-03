@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { message, Row, Col } from 'antd';
 import conf from '../../app.conf';
-import moment from 'moment';
+import moment from 'moment/moment';
 
 // CSS
 import './Booking.css';

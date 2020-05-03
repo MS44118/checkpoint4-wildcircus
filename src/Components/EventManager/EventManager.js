@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import axios from 'axios';
 import { message, Row, Col, TimePicker,  DatePicker } from 'antd';
 import conf from '../../app.conf';
-import moment from 'moment';
+import moment from 'moment/moment';
 
 // CSS
 import './EventManager.css';

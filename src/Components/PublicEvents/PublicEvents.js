@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import moment from 'moment';
+import moment from 'moment/moment';
 import { Modal, message } from 'antd';
 import conf from '../../app.conf';
 
